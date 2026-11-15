@@ -1,0 +1,55 @@
+{
+  "name": "01 - connection test",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -32
+      ],
+      "id": "d7f03c03-aa12-4211-961c-1861dfc01c7d",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "authentication": "appToken",
+        "email": "test.lead@example.com",
+        "additionalFields": {
+          "firstName": "Test"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2.3,
+      "position": [
+        272,
+        96
+      ],
+      "id": "0a1afc5c-87ed-45c8-8a84-81e55885d590",
+      "name": "Create or update a contact",
+      "credentials": {
+        "hubspotAppToken": {
+          "id": "9HTLVBoXStFLwWaT",
+          "name": "HubSpot Service Key account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "cb7f3a32-1385-41fd-8281-031c946166cd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f4597be0fab344859373448d614026539fe841e9c63cc8bdb2560d0fc78901e0"
+  },
+  "nodeGroups": [],
+  "id": "l4ldwHErZP58Le3c",
+  "tags": []
+}

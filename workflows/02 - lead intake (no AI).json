@@ -1,0 +1,332 @@
+{
+  "name": "02 - lead intake (no AI)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-intake",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        -320,
+        48
+      ],
+      "id": "6dd9095f-9110-4873-b512-d63b2fa7f275",
+      "name": "Webhook",
+      "webhookId": "ca8b173d-eb2a-453e-9dd6-119b79e47682"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1ef7cd29-d343-46cb-a6dc-933bfd38b24a",
+              "name": "email",
+              "value": "={{ $json.body.email.trim().toLowerCase() }}",
+              "type": "string"
+            },
+            {
+              "id": "bcef853e-3505-400c-9c40-a22ac4e66b82",
+              "name": "first_name",
+              "value": "={{ $json.body.first_name }}",
+              "type": "string"
+            },
+            {
+              "id": "6daa696c-3cf5-44f3-8790-81340d42e66a",
+              "name": "last_name",
+              "value": "={{ $json.body.last_name }}",
+              "type": "string"
+            },
+            {
+              "id": "73f958ce-b6cb-4463-809b-35999bdf0613",
+              "name": "company",
+              "value": "={{ $json.body.company }}",
+              "type": "string"
+            },
+            {
+              "id": "8a4f1d58-2132-4c22-ae55-f87d6c55f4df",
+              "name": "website",
+              "value": "={{ $json.body.website }}",
+              "type": "string"
+            },
+            {
+              "id": "d97affc4-cbfb-4b56-9259-eacd4f7fe43b",
+              "name": "store_platform",
+              "value": "={{ $json.body.store_platform }}",
+              "type": "string"
+            },
+            {
+              "id": "16342e1c-f408-4f6b-94ac-03798d1de044",
+              "name": "monthly_orders",
+              "value": "={{ Number($json.body.monthly_orders) }}",
+              "type": "number"
+            },
+            {
+              "id": "4bbca5a5-58ce-4fd1-aa7c-c871be6c2caf",
+              "name": "current_helpdesk",
+              "value": "={{ $json.body.current_helpdesk }}",
+              "type": "string"
+            },
+            {
+              "id": "2e6e466e-9e45-4c1f-a4af-92aadc73ed4f",
+              "name": "country",
+              "value": "={{ $json.body.country }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -16,
+        48
+      ],
+      "id": "d07257c0-2634-4bc3-a9a2-7cf24171114f",
+      "name": "Normalize"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "0fd674dc-856d-49e3-8d28-a625bb2921de",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "@",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "5a1f91a3-68c3-47d6-ac59-e0bba094d214",
+              "leftValue": "={{ $json.company }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        240,
+        48
+      ],
+      "id": "f0670f51-8979-4e2c-854a-afc0831f7975",
+      "name": "Valid lead?"
+    },
+    {
+      "parameters": {
+        "authentication": "appToken",
+        "operation": "search",
+        "filterGroupsUi": {
+          "filterGroupsValues": [
+            {
+              "filtersUi": {
+                "filterValues": [
+                  {
+                    "propertyName": "email|string",
+                    "value": "={{ $json.email }}"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2.3,
+      "position": [
+        576,
+        32
+      ],
+      "id": "36b14945-8e83-4907-b180-b0c5934721fe",
+      "name": "Find existing contact",
+      "alwaysOutputData": true,
+      "credentials": {
+        "hubspotAppToken": {
+          "id": "9HTLVBoXStFLwWaT",
+          "name": "HubSpot Service Key account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8bae5113-9eeb-42ad-a0d8-6c9b89aad9d2",
+              "name": "lead_segment",
+              "value": "={{ $('Normalize').item.json.monthly_orders < 2000 ? 'SMB' : $('Normalize').item.json.monthly_orders <= 20000 ? 'Mid-market' : 'Enterprise' }}",
+              "type": "string"
+            },
+            {
+              "id": "fd047544-908b-47d9-8df9-3d2c738d1a2e",
+              "name": "assigned_rep",
+              "value": "={{ $('Normalize').item.json.monthly_orders < 2000 ? 'Alex Rivera' : $('Normalize').item.json.monthly_orders <= 20000 ? 'Priya Shah' : 'Jordan Lee' }}",
+              "type": "string"
+            },
+            {
+              "id": "86d0e882-1cb8-4e32-a4b7-00658d17800e",
+              "name": "is_existing",
+              "value": "={{ $json.id !== undefined }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        848,
+        32
+      ],
+      "id": "771bcb0d-9746-4590-96da-9c0492f79484",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "authentication": "appToken",
+        "email": "={{ $('Normalize').item.json.email }}",
+        "additionalFields": {
+          "companyName": "={{ $('Normalize').item.json.company }}",
+          "country": "={{ $('Normalize').item.json.country }}",
+          "customPropertiesUi": {
+            "customPropertiesValues": [
+              {
+                "property": "lead_segment",
+                "value": "={{ $json.lead_segment }}"
+              },
+              {
+                "property": "assigned_rep",
+                "value": "={{ $json.assigned_rep }}"
+              },
+              {
+                "property": "store_platform",
+                "value": "={{ $('Normalize').item.json.store_platform }}"
+              },
+              {
+                "property": "monthly_orders",
+                "value": "={{ $('Normalize').item.json.monthly_orders }}"
+              },
+              {
+                "property": "current_helpdesk",
+                "value": "={{ $('Normalize').item.json.current_helpdesk }}"
+              }
+            ]
+          },
+          "firstName": "={{ $('Normalize').item.json.first_name }}",
+          "lastName": "={{ $('Normalize').item.json.last_name }}",
+          "websiteUrl": "={{ $('Normalize').item.json.website }}"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2.3,
+      "position": [
+        1120,
+        32
+      ],
+      "id": "094af7bb-f8cc-4c1e-86d8-eff5ea8fe753",
+      "name": "Upsert contact",
+      "notesInFlow": false,
+      "credentials": {
+        "hubspotAppToken": {
+          "id": "9HTLVBoXStFLwWaT",
+          "name": "HubSpot Service Key account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize": {
+      "main": [
+        [
+          {
+            "node": "Valid lead?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid lead?": {
+      "main": [
+        [
+          {
+            "node": "Find existing contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find existing contact": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Upsert contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "ab95daa6-79b5-4b0a-b56a-f17c7d088e78",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f4597be0fab344859373448d614026539fe841e9c63cc8bdb2560d0fc78901e0"
+  },
+  "nodeGroups": [],
+  "id": "pdEylpzUZZey7rTf",
+  "tags": []
+}
