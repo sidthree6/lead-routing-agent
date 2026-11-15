@@ -2,6 +2,8 @@ services:
   enrichment:
     build: .
     image: lead-routing-enrichment:0.1.0
+    # Built from this repo, never pulled: lets "Pull and redeploy" skip it.
+    pull_policy: build
     container_name: enrichment
     ports:
       - "8001:8000"
