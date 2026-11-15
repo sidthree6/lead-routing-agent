@@ -1,9 +1,8 @@
 services:
   enrichment:
-    build: .
-    image: lead-routing-enrichment:0.1.0
-    # Built from this repo, never pulled: lets "Pull and redeploy" skip it.
-    pull_policy: never
+    # Built on the dev machine and pushed to GHCR. No build: section, because
+    # Portainer Agent environments cannot build images (portainer#13255).
+    image: ghcr.io/sidthree6/lead-routing-enrichment:0.1.0
     container_name: enrichment
     ports:
       - "8001:8000"
