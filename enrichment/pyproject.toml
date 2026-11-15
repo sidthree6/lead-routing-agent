@@ -1,0 +1,19 @@
+[project]
+name = "enrichment"
+version = "0.1.0"
+description = "Mock company enrichment API: dummy firmographic data by domain."
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.163.0",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.2.0",
+]
