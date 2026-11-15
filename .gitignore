@@ -1,0 +1,25 @@
+# Claude Code and agent files
+.claude/
+CLAUDE.md
+CLAUDE.local.md
+FOR-AI.md
+TASKS.md
+
+# Secrets
+.env
+*.key
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Evaluation output
+eval/results/
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
